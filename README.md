@@ -1,4 +1,4 @@
-###Expense Tracker
+## Expense Tracker
 
 A full-stack web application for tracking and managing personal expenses with user authentication.
 
