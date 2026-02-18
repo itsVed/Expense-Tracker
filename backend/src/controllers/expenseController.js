@@ -1,6 +1,5 @@
 const Expense = require('../models/Expense');
 
-// Helper function to convert Decimal128 to number
 const convertExpenseAmount = (expense) => {
   if (!expense) return expense;
   const obj = expense.toObject ? expense.toObject() : expense;
@@ -10,14 +9,11 @@ const convertExpenseAmount = (expense) => {
   return obj;
 };
 
-// @desc    Create a new expense
-// @route   POST /api/expenses
-// @access  Private
+
 exports.createExpense = async (req, res) => {
   try {
     const { amount, category, description, date } = req.body;
 
-    // Validation
     if (!amount || !category || !description || !date) {
       return res
         .status(400)
@@ -27,14 +23,12 @@ exports.createExpense = async (req, res) => {
         });
     }
 
-    // Validate amount is positive
     if (isNaN(amount) || parseFloat(amount) <= 0) {
       return res
         .status(400)
         .json({ success: false, message: 'Amount must be a positive number' });
     }
 
-    // Validate date is valid
     const expenseDate = new Date(date);
     if (isNaN(expenseDate.getTime())) {
       return res
@@ -61,21 +55,16 @@ exports.createExpense = async (req, res) => {
   }
 };
 
-// @desc    Get all expenses with filtering and sorting
-// @route   GET /api/expenses
-// @access  Private
 exports.getExpenses = async (req, res) => {
   try {
     const { category, sort } = req.query;
 
-    // Build filter object
     const filter = { userId: req.userId };
     if (category) {
       filter.category = category;
     }
 
-    // Build sort object
-    let sortObj = { date: -1 }; // Default: newest first
+    let sortObj = { date: -1 }; 
     if (sort === 'date_desc') {
       sortObj = { date: -1 };
     } else if (sort === 'date_asc') {
@@ -84,10 +73,8 @@ exports.getExpenses = async (req, res) => {
 
     const expenses = await Expense.find(filter).sort(sortObj);
 
-    // Convert Decimal128 to number
     const convertedExpenses = expenses.map(convertExpenseAmount);
 
-    // Calculate total
     const total = convertedExpenses.reduce((sum, expense) => {
       return sum + parseFloat(expense.amount || 0);
     }, 0);
@@ -103,9 +90,7 @@ exports.getExpenses = async (req, res) => {
   }
 };
 
-// @desc    Get single expense
-// @route   GET /api/expenses/:id
-// @access  Private
+
 exports.getExpense = async (req, res) => {
   try {
     const expense = await Expense.findById(req.params.id);
@@ -116,7 +101,6 @@ exports.getExpense = async (req, res) => {
         .json({ success: false, message: 'Expense not found' });
     }
 
-    // Check if user owns the expense
     if (expense.userId.toString() !== req.userId) {
       return res
         .status(403)
@@ -133,9 +117,7 @@ exports.getExpense = async (req, res) => {
   }
 };
 
-// @desc    Update expense (Idempotent)
-// @route   PUT /api/expenses/:id
-// @access  Private
+
 exports.updateExpense = async (req, res) => {
   try {
     let expense = await Expense.findById(req.params.id);
@@ -146,14 +128,12 @@ exports.updateExpense = async (req, res) => {
         .json({ success: false, message: 'Expense not found' });
     }
 
-    // Check if user owns the expense
     if (expense.userId.toString() !== req.userId) {
       return res
         .status(403)
         .json({ success: false, message: 'Not authorized to update this expense' });
     }
 
-    // Validate amount if provided
     if (req.body.amount && (isNaN(req.body.amount) || parseFloat(req.body.amount) <= 0)) {
       return res
         .status(400)
@@ -176,19 +156,15 @@ exports.updateExpense = async (req, res) => {
   }
 };
 
-// @desc    Delete expense (Idempotent)
-// @route   DELETE /api/expenses/:id
-// @access  Private
+
 exports.deleteExpense = async (req, res) => {
   try {
     const expense = await Expense.findById(req.params.id);
 
     if (!expense) {
-      // Idempotent: Return success even if already deleted
       return res.status(204).send();
     }
 
-    // Check if user owns the expense
     if (expense.userId.toString() !== req.userId) {
       return res
         .status(403)
@@ -197,16 +173,13 @@ exports.deleteExpense = async (req, res) => {
 
     await Expense.findByIdAndDelete(req.params.id);
 
-    // Idempotent: Return 204 No Content
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// @desc    Get expense summary by category
-// @route   GET /api/expenses/summary/by-category
-// @access  Private
+
 exports.getExpenseSummary = async (req, res) => {
   try {
     const summary = await Expense.aggregate([
