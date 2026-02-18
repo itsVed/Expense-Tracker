@@ -1,0 +1,146 @@
+.expense-list-container {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.expense-list-container h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+@media (max-width: 768px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filters select {
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filters select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.total-box {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.total-box h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.expenses-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.expenses-table thead {
+  background: #f9f9f9;
+  border-bottom: 2px solid #ddd;
+}
+
+.expenses-table th {
+  text-align: left;
+  padding: 0.9rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.expenses-table td {
+  padding: 0.9rem;
+  border-bottom: 1px solid #eee;
+}
+
+.expenses-table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.expenses-table .amount {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.cat-food { background: #fff3e0; color: #e65100; }
+.cat-transport { background: #e8f5e9; color: #1b5e20; }
+.cat-entertainment { background: #f3e5f5; color: #4a148c; }
+.cat-utilities { background: #e0f2f1; color: #004d40; }
+.cat-healthcare { background: #fce4ec; color: #880e4f; }
+.cat-shopping { background: #ede7f6; color: #311b92; }
+.cat-other { background: #f1f1f1; color: #424242; }
+
+.btn-delete {
+  background: #fee;
+  color: #c33;
+  border: 1px solid #c33;
+  padding: 0.5rem 0.9rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+  background: #c33;
+  color: white;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .expenses-table {
+    font-size: 0.85rem;
+  }
+
+  .expenses-table th,
+  .expenses-table td {
+    padding: 0.6rem;
+  }
+}
