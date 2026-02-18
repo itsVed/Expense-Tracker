@@ -3,7 +3,15 @@ import { expenseAPI } from '../services/api';
 import { formatDateForDisplay, formatCurrency } from '../utils/helpers';
 import '../styles/ExpenseList.css';
 
-const CATEGORIES = ['Food', 'Transport', 'Entertainment', 'Utilities', 'Healthcare', 'Shopping', 'Other'];
+const CATEGORIES = [
+  'Food',
+  'Transport',
+  'Entertainment',
+  'Utilities',
+  'Healthcare',
+  'Shopping',
+  'Other'
+];
 
 const ExpenseList = ({ refreshTrigger }) => {
   const [expenses, setExpenses] = useState([]);
@@ -13,21 +21,26 @@ const ExpenseList = ({ refreshTrigger }) => {
   const [sortOrder, setSortOrder] = useState('date_desc');
 
   useEffect(() => {
+    const fetchExpenses = async () => {
+      setLoading(true);
+      setError('');
+
+      try {
+        const response = await expenseAPI.getExpenses(
+          selectedCategory,
+          sortOrder
+        );
+
+        setExpenses(response.data.data || []);
+      } catch (err) {
+        setError('Failed to load expenses');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchExpenses();
   }, [refreshTrigger, selectedCategory, sortOrder]);
-
-  const fetchExpenses = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const response = await expenseAPI.getExpenses(selectedCategory, sortOrder);
-      setExpenses(response.data.data || []);
-    } catch (err) {
-      setError('Failed to load expenses');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDeleteExpense = async (id) => {
     if (window.confirm('Delete this expense?')) {
@@ -52,17 +65,26 @@ const ExpenseList = ({ refreshTrigger }) => {
   return (
     <div className="expense-list-container">
       <h2>Your Expenses</h2>
+
       {error && <div className="error-message">{error}</div>}
 
       <div className="filters">
-        <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
           <option value="">All Categories</option>
           {CATEGORIES.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
           ))}
         </select>
 
-        <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+        >
           <option value="date_desc">Newest First</option>
           <option value="date_asc">Oldest First</option>
         </select>
@@ -75,7 +97,9 @@ const ExpenseList = ({ refreshTrigger }) => {
       {loading ? (
         <div className="loading">Loading...</div>
       ) : expenses.length === 0 ? (
-        <div className="empty-state">No expenses yet. Add one! 💰</div>
+        <div className="empty-state">
+          No expenses yet. Add one! 💰
+        </div>
       ) : (
         <table className="expenses-table">
           <thead>
@@ -91,9 +115,17 @@ const ExpenseList = ({ refreshTrigger }) => {
             {expenses.map((expense) => (
               <tr key={expense._id}>
                 <td>{formatDateForDisplay(expense.date)}</td>
-                <td><span className={`badge cat-${expense.category.toLowerCase()}`}>{expense.category}</span></td>
+                <td>
+                  <span
+                    className={`badge cat-${expense.category.toLowerCase()}`}
+                  >
+                    {expense.category}
+                  </span>
+                </td>
                 <td>{expense.description}</td>
-                <td className="amount">{formatCurrency(expense.amount)}</td>
+                <td className="amount">
+                  {formatCurrency(expense.amount)}
+                </td>
                 <td>
                   <button
                     className="btn-delete"
